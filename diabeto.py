@@ -3,7 +3,8 @@ import pandas as pd
 import joblib
 
 st.set_page_config(page_title="Detector de Diabetes", layout="centered")
-
+# Agrega una imagen de encabezado
+st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Diabetes_symbol.svg/1024px-Diabetes_symbol.svg.png", width=150)
 st.title("Diabeto: Detecta si tienes o eres candidato a tener Diabetes")
 st.markdown(
     """
