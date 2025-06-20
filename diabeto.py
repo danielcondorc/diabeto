@@ -4,11 +4,12 @@ import joblib
 
 st.set_page_config(page_title="Detector de Diabetes", layout="centered")
 
-st.title("Detecta si tienes o eres candidato a tener Diabetes")
+st.title("Diabeto: Detecta si tienes o eres candidato a tener Diabetes")
 st.markdown(
     """
     Ingresa la información de cada campo y al final podrás conocer si tienes o eres candidato de tener Diabetes.
     **Todos los campos deben ser numéricos** según la escala indicada.
+    La aplicación Diabeto, predice la probabilidad de una persona de tener diabetes tipo 2 a través un modelo de machine learning con un 74% de precisión. 
     """
 )
 
