@@ -1,9 +1,34 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import requests
+import json
+import os
 
 st.set_page_config(page_title="Detector de Diabetes", layout="centered")
-# Agrega una imagen de encabezado
+def obtener_ip():
+    try:
+        return requests.get('https://api.ipify.org').text
+    except:
+        return "IP no disponible"
+
+def registrar_visita(ip, archivo='visitas_por_ip.json'):
+    if not os.path.exists(archivo):
+        with open(archivo, 'w') as f:
+            json.dump({}, f)
+
+    with open(archivo, 'r') as f:
+        data = json.load(f)
+
+    if ip not in data:
+        data[ip] = 1
+    else:
+        data[ip] += 1
+
+    with open(archivo, 'w') as f:
+        json.dump(data, f)
+
+    return len(data)
 
 st.title("Diabeto: Detecta si tienes o eres candidato a tener Diabetes")
 st.markdown(
@@ -13,6 +38,10 @@ st.markdown(
     La aplicación Diabeto, predice la probabilidad de una persona de tener diabetes tipo 2 a través un modelo de machine learning con un 74% de precisión. 
     """
 )
+
+ip_usuario = obtener_ip()
+total_ips = registrar_visita(ip_usuario)
+st.sidebar.markdown(f"🌎 Visitas únicas: **{total_ips}**")
 
 # Botón para seleccionar modelo
 modelo_opcion = st.selectbox("Selecciona el modelo que deseas usar:",
