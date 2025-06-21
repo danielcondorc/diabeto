@@ -4,8 +4,12 @@ import joblib
 import requests
 import json
 import os
+import folium
+from streamlit_folium import folium_static
 
 st.set_page_config(page_title="Detector de Diabetes", layout="centered")
+
+#Geolocalizar IPs
 def obtener_ip():
     try:
         return requests.get('https://api.ipify.org').text
@@ -30,6 +34,17 @@ def registrar_visita(ip, archivo='visitas_por_ip.json'):
 
     return len(data)
 
+def geolocalizar_ip(ip):
+    try:
+        url = f"http://ip-api.com/json/{ip}"
+        response = requests.get(url).json()
+        if response['status'] == 'success':
+            return response['lat'], response['lon']
+    except:
+        pass
+    return None, None
+
+#Título página
 st.title("Diabeto: Detecta si tienes o eres candidato a tener Diabetes")
 st.markdown(
     """
@@ -101,3 +116,19 @@ if st.button("Detectar Diabetes"):
 
     except Exception as e:
         st.error(f"Ocurrió un error al cargar el modelo o hacer la predicción: {e}")
+
+#Creación de mapa con IPs registradas
+# Mapa de visitas por IP
+if os.path.exists('visitas_por_ip.json'):
+    with open('visitas_por_ip.json', 'r') as f:
+        data = json.load(f)
+
+    mapa = folium.Map(location=[-9.19, -75.02], zoom_start=3)
+
+    for ip in data.keys():
+        lat, lon = geolocalizar_ip(ip)
+        if lat and lon:
+            folium.Marker(location=[lat, lon], popup=ip).add_to(mapa)
+
+    st.subheader("🌐 Mapa de visitas por IP")
+    folium_static(mapa)
